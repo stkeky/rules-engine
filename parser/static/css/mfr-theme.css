@@ -1,0 +1,23 @@
+.cm-s-xq-light span.cm-keyword {
+    color: #283593;
+}
+
+.cm-s-xq-light span.cm-action {
+    color: #1565C0;
+}
+
+.cm-s-xq-light span.cm-uuid {
+    color: #26A69A;
+}
+
+.cm-s-xq-light span.cm-number {
+    color: #00695C;
+}
+
+.cm-s-xq-light span.cm-string {
+    color: #37474F;
+}
+
+.cm-s-xq-light span.operator2 {
+    font-weight: bold;
+}

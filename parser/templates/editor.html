@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>MainFlux Rules Editor</title>
+</head>
+<body>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.34.0/codemirror.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.34.0/addon/mode/simple.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="/static/js/mfr-editor.js"></script>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.34.0/codemirror.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.34.0/theme/xq-light.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/spectre.css/0.5.1/spectre-exp.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/spectre.css/0.5.1/spectre.min.css">
+<link rel="stylesheet" href="/static/css/mfr-theme.css">
+
+<div class="container m-2">
+    <div class="columns">
+        <div class="column col-9">
+            <div class="card">
+                <div class="card-header centered">
+                    <div class="card-title h3 centered">MainFlux Rules Editor</div>
+                    <div class="card-subtitle text-gray centered" style="text-align: center">Specify your rules in
+                        editor below.
+                    </div>
+                </div>
+                <div class="card-body">
+                    <form style="text-align: left">
+                        <input type="hidden" value={{ user_id }} id="userId" name="userId"/>
+                        <label for="code"></label>
+                        <textarea id="code" name="code" rows="20"></textarea>
+                    </form>
+                </div>
+                <div class="card-footer centered">
+                    <button id="submitRule" name="submitRule" class="btn btn-primary">Submit</button>
+                </div>
+                <div class="card-footer centered">
+                    <span id="successMessage" class="label label-success"
+                          style="display: none">Rules Accepted</span>
+                    <span id="errorMessage" class="label label-error"
+                          style="display: none">Rules denied, invalid syntax</span>
+                </div>
+            </div>
+        </div>
+        <div class="column col-3">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title h3">Grammar Specification</div>
+                    <div class="card-subtitle text-gray">Need any help about grammar specification?</div>
+                </div>
+                <div class="card-footer">
+                    <a href="https://github.com/MainfluxLabs/rules-engine/blob/dev/doc/DSLSYNTAX.md">Grammar Help</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        var editor = new Editor("code");
+        editor.init();
+
+        var errorMessage = $("#errorMessage");
+        var successMessage = $("#successMessage");
+
+        $("#submitRule").click(function () {
+            $.ajax("/users/" + $("#userId").val() + "/rules", {
+                type: "POST",
+                data: editor.editor.getValue(),
+                statusCode: {
+                    202: function () {
+                        errorMessage.hide();
+                        successMessage.show();
+                        editor.editor.setValue("");
+                    },
+                    503: function () {
+                        successMessage.hide();
+                        errorMessage.text("Service unavailable, please try later");
+                        errorMessage.show();
+                    },
+                    500: function () {
+                        successMessage.hide();
+                        errorMessage.text("Service unavailable, please try later");
+                        errorMessage.show();
+                    },
+                    400: function () {
+                        successMessage.hide();
+                        errorMessage.text("Rules denied, invalid syntax");
+                        errorMessage.show();
+                    }
+                }
+            });
+        });
+    });
+
+</script>
+</body>
+</html>

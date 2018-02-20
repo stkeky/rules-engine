@@ -22,7 +22,7 @@ class Handler(tornado.web.RequestHandler):
                 self.clear()
                 self.set_status(503)
 
-        except TextXSyntaxError:
+        except (TextXSyntaxError, AttributeError):
             self.clear()
             self.set_status(400)
 
