@@ -1,6 +1,8 @@
 package engine
 
-import "github.com/mainflux/mainflux/writer"
+import (
+	"github.com/mainflux/mainflux/writer"
+)
 
 // Condition represents definition what needs to be satisfied in order to trigger
 // an action.
@@ -8,7 +10,7 @@ type Condition struct {
 	DeviceID string        `json:"deviceId"`
 	Property string        `json:"property"`
 	Operator Operator      `json:"operator"`
-	Type     ConditionType `json:"-"`
+	Type     ConditionType `json:"type"`
 	Value    interface{}   `json:"value"`
 }
 

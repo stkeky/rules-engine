@@ -50,6 +50,7 @@ func (repo *ruleRepository) One(userId string, ruleId string) (*engine.Rule, err
 	if err := json.Unmarshal(conditions, &r.Conditions); err != nil {
 		return nil, err
 	}
+	r.Conditions = normalize(r.Conditions)
 
 	if err := json.Unmarshal(actions, &dbActions); err != nil {
 		return nil, err
@@ -87,6 +88,7 @@ func (repo *ruleRepository) All(userId string) []engine.Rule {
 		if json.Unmarshal(conditions, &r.Conditions) != nil {
 			return rulesList
 		}
+		r.Conditions = normalize(r.Conditions)
 
 		if json.Unmarshal(actions, &dbActions) != nil {
 			return rulesList

@@ -14,9 +14,28 @@ const (
 	content   string = "Content"
 	recipient string = "Recipient"
 	deviceId  string = "DeviceId"
+
+	from string = "from"
+	to   string = "to"
 )
 
 type dbAction map[string]interface{}
+
+func normalize(cnds []engine.Condition) []engine.Condition {
+	var normalized []engine.Condition
+	for _, cnd := range cnds {
+		switch cnd.Value.(type) {
+		case map[string]interface{}:
+			obj := cnd.Value.(map[string]interface{})
+			if rng, err := convertRange(obj); err == nil {
+				cnd.Value = *rng
+			}
+		}
+		normalized = append(normalized, cnd)
+	}
+
+	return normalized
+}
 
 func fromDomain(actions []engine.Action) ([]dbAction) {
 	var dbActions []dbAction
@@ -129,6 +148,20 @@ func requireStrProp(object map[string]interface{}, prop string) (*string, error)
 	if p, ok := object[prop]; ok {
 		if sp, ok := p.(string); ok && sp != "" {
 			return &sp, nil
+		}
+	}
+
+	return nil, engine.ErrMalformedEntity
+}
+
+func convertRange(object map[string]interface{}) (*engine.Range, error) {
+	if fp, ok := object[from]; ok {
+		if from, ok := fp.(float64); ok {
+			if tp, ok := object[to]; ok {
+				if to, ok := tp.(float64); ok {
+					return &engine.Range{From: from, To: to}, nil
+				}
+			}
 		}
 	}
 

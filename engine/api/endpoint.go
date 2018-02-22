@@ -9,6 +9,8 @@ import (
 
 func retrieveRuleEndpoint(svc engine.Service) endpoint.Endpoint {
 	return func(_ context.Context, body interface{}) (interface{}, error) {
+		res := &viewRuleRes{}
+
 		b := body.(viewRuleReq)
 
 		if err := b.validate(); err != nil {
@@ -20,12 +22,15 @@ func retrieveRuleEndpoint(svc engine.Service) endpoint.Endpoint {
 			return nil, err
 		}
 
-		return viewRuleRes{*rule}, nil
+		res.fromDomain(*rule)
+		return *res, nil
 	}
 }
 
 func retrieveRulesEndpoint(svc engine.Service) endpoint.Endpoint {
 	return func(_ context.Context, body interface{}) (interface{}, error) {
+		res := &listRulesRes{}
+
 		b := body.(listRulesReq)
 
 		if err := b.validate(); err != nil {
@@ -37,7 +42,8 @@ func retrieveRulesEndpoint(svc engine.Service) endpoint.Endpoint {
 			return nil, err
 		}
 
-		return listRulesRes{rulesList, len(rulesList)}, nil
+		res.fromDomain(rulesList)
+		return *res, nil
 	}
 }
 
