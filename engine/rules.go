@@ -1,6 +1,9 @@
 package engine
 
-import "github.com/mainflux/mainflux/writer"
+import (
+	"github.com/mainflux/mainflux/writer"
+	"github.com/MainfluxLabs/rules-engine/engine/actions"
+)
 
 // Rule represents base model for Mainflux rule.
 type Rule struct {
@@ -36,7 +39,9 @@ type SendEmailAction struct {
 
 var _ Action = (*SendEmailAction)(nil)
 
-func (action SendEmailAction) Execute() {}
+func (action SendEmailAction) Execute() {
+	go actions.MailService().SendEmail(action.Recipient, action.Content)
+}
 
 // TurnOffAction represents model for triggering action to turn off
 // the device.
