@@ -11,6 +11,8 @@ services:
       RULES_ENGINE_DB_CLUSTER: cassandra
       RULES_ENGINE_DB_KEYSPACE: rules_engine
       NATS_URL: nats://nats:4222
+      EMAIL_USERNAME: "test@gmail.com"
+      EMAIL_PASSWORD: "password"
     ports:
       - "9000:9000"
 
